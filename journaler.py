@@ -17,6 +17,7 @@ from pathlib import Path
 import platform
 import time
 import tomllib
+import subprocess
 
 
 def get_args() -> argparse.Namespace:
@@ -58,14 +59,13 @@ def get_default_editor() -> str:
 
 @dataclass
 class Config:
-    date_format: str = "%Y%m%d-%H%M%S" # YYYYMMDD-HHMMSS
-    file_extension: str = ".md"
-    editor: str = get_default_editor()
-    journal_directory: Path = get_default_journal_dir_based_on_platform()
-    file_title: str = datetime.now().strftime(date_format)
+    date_format: str
+    file_extension: str
+    editor: str
+    journal_directory: Path
+    file_title: str | None
 
-
-def get_configuration(args: argparse.Namespace) -> None:
+def get_configuration(args: argparse.Namespace) -> Config:
     """
     First, reads from the arguments and sets the variables accordingly
 
@@ -77,8 +77,6 @@ def get_configuration(args: argparse.Namespace) -> None:
 
     Any unlisted variables in both the args and config will use default values
     """
-
-    is_new_config: bool = False
 
     ### Default variables
     default_date_format: str = "%Y%m%d-%H%M%S"
@@ -97,22 +95,88 @@ def get_configuration(args: argparse.Namespace) -> None:
         print(f"Config file doesn't exist! Creating default config at {str(config_path)}")
         time.sleep(1) # second
         
-        config_data = f"""# This is the default configuration!
+        config_text_data = f"""# This is the default configuration!
 
 date_title_format = "{default_date_format}"
 file_extension = "{default_file_extension}"
 editor = "{default_editor}"
 journal_directory = "{str(default_journal_dir)}"
 """
-        config_path.write_text(config_data)
+        config_path.write_text(config_text_data)
 
+        return Config(
+            date_format=(args.date_format if args.date_format is not None else default_date_format),
+            file_extension=(args.file_ext if args.file_ext is not None else default_file_extension),
+            editor=(args.editor if args.editor is not None else default_editor),
+            journal_directory=(Path(args.journal_dir) if args.journal_dir is not None else default_journal_dir),
+            file_title=args.title
+        )
+            
+    ### Config variables
+    date_format: str
+    file_extension: str
+    editor: str
+    journal_dir: Path
+
+    with config_path.open("rb") as file:
+         config_data = tomllib.load(file)
+
+    if args.date_format is not None:
+        date_format = args.date_format
     else:
-        with config_path.open("rb") as file:
-            config_data = tomllib.load(file)
+        if config_data["date_title_format"] is not None:
+            date_format = config_data["date_title_format"]
+        else:
+            date_format = default_date_format
+
+    if args.file_ext is not None:
+        file_extension = args.file_ext
+    else:
+        if config_data["file_extension"] is not None:
+            file_extension = config_data["file_extension"]
+        else:
+            file_extension = default_file_extension
+    
+    if args.editor is not None:
+        editor = args.editor
+    else:
+        if config_data["editor"] is not None:
+            editor = config_data["editor"]
+        else:
+            editor = default_editor
+
+    if args.journal_dir is not None:
+        journal_dir = Path(args.journal_dir)
+    else:
+        if config_data["journal_directory"] is not None:
+            journal_dir = Path(config_data["journal_directory"])
+        else:
+            journal_dir = default_journal_dir
+
+    return Config(
+        date_format=date_format,
+        file_extension=file_extension,
+        editor=editor,
+        journal_directory=journal_dir,
+        file_title=args.title
+    )
+
+
+def create_and_open_entry(config: Config) -> None:
+    filename: str = (config.file_title + config.file_extension) if config.file_title is not None else (datetime.now().strftime(config.date_format) + config.file_extension)
+
+    config.journal_directory.mkdir(parents=True, exist_ok=True)
+
+    file_path: Path = config.journal_directory / filename
+    file_path.touch()
+
+    subprocess.run([config.editor, str(file_path)])
 
 def main() -> None:
     args = get_args()
-    get_configuration(args)
+    config: Config = get_configuration(args)
+    create_and_open_entry(config)
+
 
 if __name__ == "__main__":
     main()
