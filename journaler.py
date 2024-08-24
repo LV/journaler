@@ -79,7 +79,7 @@ def get_configuration(args: argparse.Namespace) -> Config:
     """
 
     ### Default variables
-    default_date_format: str = "%Y%m%d-%H%M%S"
+    default_date_format: str = "%Y-%m-%d_%H-%M-%S"
     default_file_extension: str = ".md"
     default_editor: str = get_default_editor()
     default_journal_dir: Path = get_default_journal_dir_based_on_platform()
@@ -91,7 +91,6 @@ def get_configuration(args: argparse.Namespace) -> Config:
 
     # Write to config with default values if config file is empty
     if config_path.exists() and config_path.is_file() and config_path.stat().st_size == 0:
-        is_new_config = True
         print(f"Config file doesn't exist! Creating default config at {str(config_path)}")
         time.sleep(1) # second
         
@@ -171,6 +170,7 @@ def create_and_open_entry(config: Config) -> None:
     file_path.touch()
 
     subprocess.run([config.editor, str(file_path)])
+
 
 def main() -> None:
     args = get_args()
