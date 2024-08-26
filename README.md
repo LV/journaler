@@ -81,7 +81,5 @@ journal_directory = "~/journal"
 ```
 
 #### Notes
-
 - All options are case-sensitive.
 - String values should be enclosed in double quotes.
-```
