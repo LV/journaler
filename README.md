@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="300" height="300" src="https://github.com/LV/journaler/blob/master/assets/logo.png?raw=true">
+  <img width="300" height="300" src="https://raw.githubusercontent.com/LV/journaler/80f21cbd3f0ba8b95795da5d96d35aad449596dc/assets/logo_white.png">
   <p align="center"><em>A quick command to create new entries in your preferred editor</em></p>
 </p>
 
