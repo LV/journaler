@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 """
 Creates a new file upon invokation into the editor and directory of the user's choice
 
