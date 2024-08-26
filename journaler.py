@@ -10,14 +10,14 @@ Currently only for Unix systems
 """
 
 import argparse
-from dataclasses import dataclass
-from datetime import datetime
 import os
-from pathlib import Path
 import platform
+import subprocess
 import time
 import tomllib
-import subprocess
+from dataclasses import dataclass
+from datetime import datetime
+from pathlib import Path
 
 
 def get_args() -> argparse.Namespace:
