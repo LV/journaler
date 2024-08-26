@@ -21,7 +21,9 @@ import subprocess
 
 
 def get_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Creates new journal entry and opens file in editor of choice")
+    parser = argparse.ArgumentParser(
+        description="Creates new journal entry and opens file in editor of choice"
+    )
 
     parser.add_argument("-d", "--date-format", action="store")
     parser.add_argument("-e", "--editor", action="store")
@@ -35,21 +37,23 @@ def get_args() -> argparse.Namespace:
 def get_config_dir_based_on_platform() -> Path:
     # NOTE: As of now no support for a config file in a non-default location
     match platform.system():
-        case ("Linux" | "Darwin"):
-            return Path(os.getenv('XDG_CONFIG_HOME', str(Path.home() / ".config")))
+        case "Linux" | "Darwin":
+            return Path(os.getenv("XDG_CONFIG_HOME", str(Path.home() / ".config")))
         case _:
             raise RuntimeError("This platform is currently not supported")
 
+
 def get_default_journal_dir_based_on_platform() -> Path:
     match platform.system():
-        case ("Linux" | "Darwin"):
+        case "Linux" | "Darwin":
             return Path.home() / "journal"
         case _:
             raise RuntimeError("This platform is currently not supported")
 
+
 def get_default_editor() -> str:
     match platform.system():
-        case ("Linux" | "Darwin"):
+        case "Linux" | "Darwin":
             return os.getenv("EDITOR") or os.getenv("VISUAL") or "nano"
         case "Windows":
             return os.getenv("EDITOR") or os.getenv("VISUAL") or "notepad"
@@ -64,6 +68,7 @@ class Config:
     editor: str
     journal_directory: Path
     file_title: str | None
+
 
 def get_configuration(args: argparse.Namespace) -> Config:
     """
@@ -85,15 +90,23 @@ def get_configuration(args: argparse.Namespace) -> Config:
     default_journal_dir: Path = get_default_journal_dir_based_on_platform()
 
     # Create config file if it doesn't exist
-    config_path: Path = get_config_dir_based_on_platform() / "journaler" / "journaler.toml"
+    config_path: Path = (
+        get_config_dir_based_on_platform() / "journaler" / "journaler.toml"
+    )
     config_path.parent.mkdir(parents=True, exist_ok=True)
     config_path.touch(exist_ok=True)
 
     # Write to config with default values if config file is empty
-    if config_path.exists() and config_path.is_file() and config_path.stat().st_size == 0:
-        print(f"Config file doesn't exist! Creating default config at {str(config_path)}")
-        time.sleep(1) # second
-        
+    if (
+        config_path.exists()
+        and config_path.is_file()
+        and config_path.stat().st_size == 0
+    ):
+        print(
+            f"Config file doesn't exist! Creating default config at {str(config_path)}"
+        )
+        time.sleep(1)  # second
+
         config_text_data = f"""# This is the default configuration!
 
 date_title_format = "{default_date_format}"
@@ -104,13 +117,23 @@ journal_directory = "{str(default_journal_dir)}"
         config_path.write_text(config_text_data)
 
         return Config(
-            date_format=(args.date_format if args.date_format is not None else default_date_format),
-            file_extension=(args.file_ext if args.file_ext is not None else default_file_extension),
+            date_format=(
+                args.date_format
+                if args.date_format is not None
+                else default_date_format
+            ),
+            file_extension=(
+                args.file_ext if args.file_ext is not None else default_file_extension
+            ),
             editor=(args.editor if args.editor is not None else default_editor),
-            journal_directory=(Path(args.journal_dir) if args.journal_dir is not None else default_journal_dir),
-            file_title=args.title
+            journal_directory=(
+                Path(args.journal_dir)
+                if args.journal_dir is not None
+                else default_journal_dir
+            ),
+            file_title=args.title,
         )
-            
+
     ### Config variables
     date_format: str
     file_extension: str
@@ -118,7 +141,7 @@ journal_directory = "{str(default_journal_dir)}"
     journal_dir: Path
 
     with config_path.open("rb") as file:
-         config_data = tomllib.load(file)
+        config_data = tomllib.load(file)
 
     if args.date_format is not None:
         date_format = args.date_format
@@ -135,7 +158,7 @@ journal_directory = "{str(default_journal_dir)}"
             file_extension = config_data["file_extension"]
         else:
             file_extension = default_file_extension
-    
+
     if args.editor is not None:
         editor = args.editor
     else:
@@ -157,12 +180,16 @@ journal_directory = "{str(default_journal_dir)}"
         file_extension=file_extension,
         editor=editor,
         journal_directory=journal_dir,
-        file_title=args.title
+        file_title=args.title,
     )
 
 
 def create_and_open_entry(config: Config) -> None:
-    filename: str = (config.file_title + config.file_extension) if config.file_title is not None else (datetime.now().strftime(config.date_format) + config.file_extension)
+    filename: str = (
+        (config.file_title + config.file_extension)
+        if config.file_title is not None
+        else (datetime.now().strftime(config.date_format) + config.file_extension)
+    )
 
     config.journal_directory.mkdir(parents=True, exist_ok=True)
 
