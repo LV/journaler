@@ -25,13 +25,27 @@ def get_args() -> argparse.Namespace:
         description="Creates new journal entry and opens file in editor of choice"
     )
 
+    # Optional arguments
     parser.add_argument("-d", "--date-format", action="store")
     parser.add_argument("-e", "--editor", action="store")
     parser.add_argument("-f", "--file-ext", action="store")
     parser.add_argument("-j", "--journal-dir", action="store")
-    parser.add_argument("-t", "--title", action="store")
 
-    return parser.parse_args()
+    # Optional `-t` argument for title
+    parser.add_argument("-t", "--title", action="store", help="Specify the title")
+
+    # Positional argument for title (acts like `-t` if provided)
+    parser.add_argument("positional_title", nargs="?", help="The title of the file")
+
+    args = parser.parse_args()
+
+    if args.title and args.positional_title:
+        parser.error("Specify either the title without the `-t` or with `-t`, not both")
+
+    if args.positional_title:
+        args.title = args.positional_title
+
+    return args
 
 
 def get_config_dir_based_on_platform() -> Path:
