@@ -1,5 +1,7 @@
-# journaler
-Create and edit new journal entries via your preferred editor in the terminal
+<p align="center">
+  <img width="300" height="300" src="https://github.com/LV/journaler/blob/master/assets/logo.png?raw=true">
+  <p align="center"><em>A quick command to create new entries in your preferred editor</em></p>
+</p>
 
 ## Getting started
 ### From binary
