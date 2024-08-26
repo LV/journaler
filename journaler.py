@@ -26,10 +26,10 @@ def get_args() -> argparse.Namespace:
     )
 
     # Optional arguments
-    parser.add_argument("-d", "--date-format", action="store")
-    parser.add_argument("-e", "--editor", action="store")
-    parser.add_argument("-f", "--file-ext", action="store")
-    parser.add_argument("-j", "--journal-dir", action="store")
+    parser.add_argument("-d", "--date-format", action="store", help="Specify the date string format for dated filename entries")
+    parser.add_argument("-e", "--editor", action="store", help="Specify the editor of choice to open the entry in")
+    parser.add_argument("-f", "--file-ext", action="store", help="Specify file extension of the entry")
+    parser.add_argument("-j", "--journal-dir", action="store", help="Specify the directory from which this entry should be created in")
 
     # Optional `-t` argument for title
     parser.add_argument("-t", "--title", action="store", help="Specify the title")
