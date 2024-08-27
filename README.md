@@ -4,13 +4,14 @@
 </p>
 
 ## Getting started
-1. Add execution privileges to journaler
-```sh
-chmod +x journaler.py
-```
-2. Move the program to a directory of your choice (highly recommended to add this directory to `$PATH`)
+1. Copy or move the program to a directory of your choice (highly recommended to add this directory to `$PATH`)
 ```sh
 mv journaler.py /usr/local/bin/journaler
+```
+
+2. Add execution privileges to journaler
+```sh
+chmod +x /usr/local/bin/journaler
 ```
 
 3. Run the program
