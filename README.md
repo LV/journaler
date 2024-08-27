@@ -4,25 +4,19 @@
 </p>
 
 ## Getting started
-### From binary
-1. Download the binary from the [releases page](https://github.com/LV/journaler/releases/latest)
-2. Extract the file and move the binary to your directory of choice (highly recommended to add this directory to your `$PATH`)
-3. Add execution privileges to the binary using `chmod +x journaler`
-
-### From source
-1. Install `pyinstaller`:
+1. Add execution privileges to journaler
 ```sh
-pip install pyinstaller
+chmod +x journaler.py
+```
+2. Move the program to a directory of your choice (highly recommended to add this directory to `$PATH`)
+```sh
+mv journaler.py /usr/local/bin/journaler
 ```
 
-2. Build the binary:
+3. Run the program
 ```sh
-pyinstaller --onefile journaler.py
+journaler
 ```
-
-3. Move the binary (located in `REPO_DIR/dist`)
-4. Add execution privileges to the binary by doing `chmod +x journaler`
-
 
 ## The program
 ### What is it?
